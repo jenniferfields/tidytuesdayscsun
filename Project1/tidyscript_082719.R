@@ -24,5 +24,3 @@ View(Sdata)
 
 # star wordcloud with freq of guest stars on Simpsons over all seasons
 wordcloud2(data=Sdata, size = 2.5, shape = 'star')
-
-
