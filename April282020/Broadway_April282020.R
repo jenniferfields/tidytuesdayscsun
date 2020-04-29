@@ -9,7 +9,7 @@ library(tidyverse)
 library(devtools)
 library(lubridate) #edit dates
 devtools::install_github("jakelawlor/PNWColors") 
-library(PNWColors)
+library(PNWColors) #pretty colors
 devtools::install_github("dill/emoGG")
 library(emoGG) #for emojis!!!
 devtools::install_github("seananderson/ggsidekick")
@@ -28,24 +28,22 @@ grosses$week_ending <- ymd(grosses$week_ending, quiet = FALSE, tz = NULL) #conve
 grosses$decade<-floor_date(grosses$week_ending, years(10)) #sort into decades
 
 
-colors<-pnw_palette(name="Lake",6)
 TopGrossingShows <-grosses %>%
   mutate_at(vars(decade), funs(year, month, day)) %>% #separates out date to year month and day columns
   rename(Decade = year) %>% #renames year col to Decade
   drop_na() %>% #drop rows with nas
-  group_by(show,Decade) %>%
-  summarise(Maxweekly=max(weekly_gross)) %>% 
-  group_by(Decade) %>%
-  top_n(3) # top 3 weekly grossing shows
+  group_by(show,Decade) %>% 
+  summarise(Maxweekly=max(weekly_gross)) %>% #calculate max weekly gross for each show
+  group_by(Decade) %>% 
+  top_n(3) # take the max 3 of the max weekly
 TopGrossingShows<-as.data.frame(TopGrossingShows)
 
 colors<-pnw_palette(name="Starfish",6)
 ggplot(TopGrossingShows,aes(x = Decade, y=Maxweekly, label =show)) +
   geom_emoji(emoji = "1f3a4") +
   labs(x="Decade", 
-       y="Max Weekly Gross (USD dollars)", 
+       y="Max Weekly Gross (US Dollars)", 
        fill="Broadway Show") + #labels the x and y axes
-  scale_size(range = c(.1, 15), name="Max Weekly Gross (US Dollars)") +
   labs(title="Top three Broadway shows with highest weekly box office by decade",
           subtitle = "by Jenn Fields of the Tidydors",
           caption ="Data courtesy of Playbill & The Broadway League") +
